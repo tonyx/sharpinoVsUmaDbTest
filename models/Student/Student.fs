@@ -1,0 +1,73 @@
+namespace Sharpino.Sample._9
+
+open System
+open Sharpino.Commons
+open Sharpino
+open Sharpino.Core
+
+module Student =
+    type Student = {
+        Id: Guid
+        Name: string
+        Courses: List<Guid>
+        MaxNumberOfCourses: int
+    }
+    with
+        static member MkStudent (name: string, maxNumberOfCourses: int) =
+            { Id = Guid.NewGuid(); Name = name; Courses = List.empty; MaxNumberOfCourses = maxNumberOfCourses }
+   
+        member this.AddCourse (courseId: Guid) =
+            result
+                {
+                    do! 
+                        this.Courses
+                        |> List.length < this.MaxNumberOfCourses
+                        |> Result.ofBool "Maximum number of courses reached"
+                    return    
+                        {
+                            this
+                                with
+                                    Courses = this.Courses @ [courseId]
+                        }
+                }
+
+        // skip the limit to enable massive tests
+        member this.AddCourses(coursesIds: List<Guid>) =
+            result
+                {
+                    return 
+                        {
+                            this with
+                                Courses = this.Courses @ coursesIds
+                        }
+                }
+            
+        member this.RemoveCourse (courseId: Guid) =
+            result
+                {
+                    let! courseExists =
+                        this.Courses
+                        |> List.exists (fun x -> x = courseId)
+                        |> Result.ofBool "Course does not exist"
+                    return
+                        {
+                            this
+                                with
+                                    Courses =
+                                        this.Courses |> List.filter (fun x -> x <> courseId)
+                                
+                        }
+                }
+            
+        static member Version = "_01"
+        static member StorageName = "_student"
+         
+        static member Deserialize(x: string) =
+            jsonPSerializer.Deserialize<Student> x
+            
+        member this.Serialize =
+            this
+            |> jsonPSerializer.Serialize
+            
+        
+
