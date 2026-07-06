@@ -27,5 +27,5 @@ Sharpino Massive Subscription of 10000 courses took 31 ms
 To run the comparison tests yourself, execute:
 
 ```bash
-dotnet test
+dotnet run
 ```
