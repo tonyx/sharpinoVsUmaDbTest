@@ -17,10 +17,9 @@ Our test runs show that **Sharpino is slightly faster** than UmaDb when processi
 Below are the benchmark console outputs illustrating the comparison:
 
 ```text
-// TODO: Add a few text outputs from the WriteUmaTests.fs execution here.
-// Example:
-// Uma Append operation took <X> ms
-// Add operation took <Y> ms
+UMa db Uma Append operation (10000 elements) took 86 ms         
+Sharpino Add initial states operation (10000 elements) took 30 ms                
+Sharpino Massive Subscription of 10000 courses took 31 ms
 ```
 
 ## Running the Tests
