@@ -4,6 +4,8 @@ open System
 open Sharpino
 open Sharpino.Commons
 open Sharpino.Core
+open SharpinoVsUma.Definitions
+open System.Text.Json
 
 module Balance =
     let courseCreationFee = 100.0M
@@ -62,11 +64,15 @@ module Balance =
         
         static member Version = "_01"
         static member StorageName = "_balance"
-        
-        static member Deserialize (json: string) =
-            jsonPSerializer.Deserialize<Balance> json
-        member this.Serialize =
-            jsonPSerializer.Serialize this
-        
+
+        member this.Serialize = 
+            (this, jsonOptions) |> JsonSerializer.Serialize
+        static member Deserialize (data: string) =
+            try
+                let balance = JsonSerializer.Deserialize<Balance> (data, jsonOptions)
+                Ok balance
+            with
+                | ex -> Error ex.Message
+
         
             

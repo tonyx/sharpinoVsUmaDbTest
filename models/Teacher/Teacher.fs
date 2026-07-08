@@ -3,6 +3,8 @@ open System
 open Sharpino.Commons
 open Sharpino
 open Sharpino.Core
+open SharpinoVsUma.Definitions
+open System.Text.Json
 
 module Teacher =
     let maximumNumberOfCourses = 5
@@ -40,12 +42,12 @@ module Teacher =
             
         static member Version = "_01"
         static member StorageName = "_teacher"
+        member this.Serialize = 
+            (this, jsonOptions) |> JsonSerializer.Serialize
+        static member Deserialize (data: string) =
+            try
+                let teacher = JsonSerializer.Deserialize<Teacher> (data, jsonOptions)
+                Ok teacher
+            with
+                | ex -> Error ex.Message
         
-        static member Deserialize (json: string) =
-            json
-            |> jsonPSerializer.Deserialize<Teacher>
-       
-        member this.Serialize =
-            this
-            |> jsonPSerializer.Serialize
-       

@@ -5,6 +5,8 @@ open Sharpino.Commons
 open Sharpino.Core
 open Sharpino
 open FsToolkit.ErrorHandling
+open SharpinoVsUma.Definitions
+open System.Text.Json
 
 module rec Course =
     let maximumNumberOfTeachers = 3
@@ -67,36 +69,14 @@ module rec Course =
             
             static member Version = "_01"
             static member StorageName = "_course"
-            static member Deserialize(x: string): Result<Course, string> =
-                let firstTry = jsonPSerializer.Deserialize<Course> x
-                match firstTry with
-                | Ok x -> x |> Ok
-                | Error e ->
-                    let secondTry = jsonPSerializer.Deserialize<Curse001> x
-                    match secondTry with
-                    | Ok x -> x.Upcast() |> Ok
-                    | Error e1 ->
-                        Error (e + " " + e1)
-                    
-            member this.Serialize =
-                this
-                |> jsonPSerializer.Serialize
-            
+            member this.Serialize = 
+                (this, jsonOptions) |> JsonSerializer.Serialize
+            static member Deserialize (data: string) =
+                try
+                    let course = JsonSerializer.Deserialize<Course> (data, jsonOptions)
+                    Ok course
+                with
+                    | ex -> Error ex.Message
+
+
    
-    type Curse001 =
-        {
-            Id: Guid
-            Name: string
-            Students: List<Guid>
-            MaxNumberOfStudents: int
-        }
-        with
-            static member Deserialize x =
-                jsonPSerializer.Deserialize<Curse001> x
-            member this.Upcast(): Course =
-                {   Name = this.Name
-                    Id = this.Id
-                    Students = this.Students
-                    MaxNumberOfStudents = this.MaxNumberOfStudents
-                    Teachers = []
-                }

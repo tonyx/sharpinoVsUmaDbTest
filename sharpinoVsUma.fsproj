@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Definitions.fs"/>
     <Compile Include="Models/Balance/Balance.fs" />
     <Compile Include="Models/Balance/Events.fs" />
     <Compile Include="Models/Balance/Commands.fs" />

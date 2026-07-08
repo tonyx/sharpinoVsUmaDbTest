@@ -4,6 +4,8 @@ open Sharpino.Commons
 open Sharpino.Core
 open FSharpPlus.Operators
 open FsToolkit.ErrorHandling
+open SharpinoVsUma.Definitions
+open System.Text.Json
 
 type ItemReservation =
     | Open of Guid
@@ -48,11 +50,17 @@ module Reservation =
                 
         static member Version = "_01"
         static member StorageName = "_reservations"
-        member this.Serialize =
-            this
-            |> jsonPSerializer.Serialize
-        static member Deserialize x =
-            jsonPSerializer.Deserialize<Reservation> x
+
+
+        member this.Serialize = 
+            (this, jsonOptions) |> JsonSerializer.Serialize
+        static member Deserialize (data: string) =
+            try
+                let reservation = JsonSerializer.Deserialize<Reservation> (data, jsonOptions)
+                Ok reservation
+            with
+                | ex -> Error ex.Message
+
         
         
         

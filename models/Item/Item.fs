@@ -3,6 +3,8 @@ open System
 open Sharpino.Commons
 open Sharpino.Core
 open Sharpino
+open SharpinoVsUma.Definitions
+open System.Text.Json
 
 module Item =
 
@@ -54,9 +56,13 @@ module Item =
             
         static member Version = "_01"
         static member StorageName = "_item"
-        member this.Serialize =
-            this
-            |> jsonPSerializer.Serialize
-        static member Deserialize (json: string) =
-            jsonPSerializer.Deserialize<Item> json    
+
        
+        member this.Serialize = 
+            (this, jsonOptions) |> JsonSerializer.Serialize
+        static member Deserialize (data: string) =
+            try
+                let course = JsonSerializer.Deserialize<Item> (data, jsonOptions)
+                Ok course
+            with
+                | ex -> Error ex.Message
