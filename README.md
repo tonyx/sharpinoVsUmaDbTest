@@ -12,14 +12,21 @@ The comparison is executed in the test suite defined in [WriteUmaTests.fs](file:
 
 ## Performance Results
 
-Our test runs show that **Sharpino is slightly faster** than UmaDb when processing these batch inserts.
+Our test runs show that **Sharpino is slightly faster** than UmaDb only in single task inserts.
+Umadb prevails on parallel append tasks.
 
 Below are the benchmark console outputs illustrating the comparison:
 
 ```text
-UMa db Uma Append operation (10000 elements) took 86 ms         
-Sharpino Add initial states operation (10000 elements) took 30 ms                
-Sharpino Massive Subscription of 10000 courses took 31 ms
+
+Uma Append operation took 68 ms         
+Add operation took 29 ms                
+Massive Subscription of 10000 courses took 24 ms
+Parallel Uma Append operation (10000 elements) took 504 ms
+Parallel Sharpino Add operation (10000 elements) took 763 ms
+Parallel tasks (30 tasks of 10000 elements) Uma Append operation took 832 ms
+Parallel tasks (30 tasks of 10000 elements) Sharpino Add operation took 9190 ms
+
 ```
 
 ## Running the Tests
